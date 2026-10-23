@@ -1,0 +1,23 @@
+{
+  "name": "claude-console-desktop",
+  "productName": "Claude Console",
+  "version": "0.1.0",
+  "description": "Claude Console and the web file manager in one desktop window",
+  "main": "loader.js",
+  "desktopName": "claude-console.desktop",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "fetch-electron": "node node_modules/electron/install.js",
+    "install-linux": "scripts/install-linux.sh",
+    "build-mac": "scripts/build-mac.sh",
+    "test": "node --test test/*.test.js",
+    "publish": "scripts/publish.sh",
+    "build-linux": "scripts/build-linux.sh"
+  },
+  "devDependencies": {
+    "@electron/packager": "^20.3.0",
+    "electron": "44.9.3"
+  }
+}

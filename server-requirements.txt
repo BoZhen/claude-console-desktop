@@ -1,0 +1,8 @@
+# The Python packages Claude Console and the web file manager need when the app runs
+# them on this computer (localserver.js installs them into its own environment).
+tornado>=6.4
+# the SDK version the console is written against
+claude-agent-sdk==0.2.88
+# mcp 2 dropped Server.list_tools, which this SDK uses for the console's own tools:
+# with it every session fails to start
+mcp>=1.23,<2

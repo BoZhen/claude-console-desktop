@@ -1,0 +1,8 @@
+{
+  "urls": [
+    "http://192.168.1.10:7703/",
+    "https://console.example.ts.net:7703/"
+  ],
+  "updateKey": "(scripts/make-update-key.sh writes your public key here)",
+  "electronMirror": "https://npmmirror.com/mirrors/electron/"
+}

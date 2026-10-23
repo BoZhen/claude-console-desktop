@@ -1,0 +1,44 @@
+<!doctype html>
+<!-- The disk image's window background, 760 x 560: scripts/make-mac-background.sh
+     renders it to assets/mac-dmg-background.png. Finder draws the real app and
+     Applications icons on top, centred at (200, 205) and (560, 205)
+     (scripts/make-mac-layout.py), with their names below; the arrow goes between
+     them and the text stays clear of both. -->
+<meta charset="utf-8">
+<style>
+  * { box-sizing: border-box }
+  html, body { margin: 0; width: 760px; height: 560px; overflow: hidden; background: #faf9f5; color: #1f1e1d;
+    font-family: "Noto Sans CJK SC", "Noto Sans", sans-serif; letter-spacing: 0 }
+  p, h1 { position: absolute; left: 0; width: 100%; margin: 0; text-align: center; white-space: nowrap }
+  h1 { top: 28px; font-size: 25px; font-weight: 650 }
+  .zh { font-size: 17px } .en { font-size: 13px; color: #6b6a65 }
+  #drag { top: 72px } #drag-en { top: 100px }
+  svg { position: absolute; left: 335px; top: 160px; width: 90px; height: 90px; color: #d97757 }
+  #then { top: 318px } #then-en { top: 344px }
+  hr { position: absolute; top: 380px; left: 60px; width: 640px; margin: 0; border: 0; border-top: 1px solid #dedcd3 }
+  #first { top: 396px; font-size: 14px; font-weight: 650; color: #4a4945 }
+  #one { top: 426px } #one-en { top: 452px }
+  #two { top: 484px } #two-en { top: 510px }
+  body.overflow { outline: 6px solid red; outline-offset: -6px }
+</style>
+<h1>Claude Console</h1>
+<p id="drag" class="zh">把左边的 Claude Console 拖到右边的 Applications 文件夹</p>
+<p id="drag-en" class="en">Drag Claude Console onto Applications to install it. If asked, choose Replace.</p>
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M4 12h15"/><path d="m13 6 6 6-6 6"/>
+</svg>
+<p id="then" class="zh">复制完后推出这个磁盘，再从「应用程序」打开 Claude Console</p>
+<p id="then-en" class="en">Then eject this disk and open Claude Console from Applications.</p>
+<hr>
+<p id="first">第一次打开 · First start</p>
+<p id="one" class="zh">macOS 提示无法验证时，点「完成」关掉提示，不要点「移到废纸篓」</p>
+<p id="one-en" class="en">If macOS cannot verify the app, click Done. Do not move it to the Trash.</p>
+<p id="two" class="zh">再到「系统设置 › 隐私与安全性」点「仍要打开」，并在新窗口里确认</p>
+<p id="two-en" class="en">Then click Open Anyway in System Settings › Privacy &amp; Security, and confirm.</p>
+<script>
+  // a line wider than the window gets a red frame in the image, which the build checks
+  document.fonts.ready.then(() => {
+    if ([...document.querySelectorAll('p, h1')].some(el => el.scrollWidth > el.clientWidth))
+      document.body.classList.add('overflow');
+  });
+</script>

@@ -9,28 +9,46 @@ The console can run on another computer, a server the app connects to, or on thi
 computer: then the app starts Claude Console and the file manager itself, with this
 computer's `claude` CLI, and stops them when it quits (see [This computer](#this-computer)).
 
-```
-┌──────────────────────────────┬─┬────────────────────────────────┐
-│ Claude Console               │ │ Files │ main.js × │ README.md ×│
-│                              │ │                                │
-│  chat …                      │◂▸│  the file, in the file manager │
-│  see /path/main.js  ───────────▶│                                │
-│                              │ │                                │
-│  [ Type a message… ]         │ │                                │
-└──────────────────────────────┴─┴────────────────────────────────┘
-```
+<p align="center">
+  <img src="https://raw.githubusercontent.com/BoZhen/claude-console/main/figs/desktop-chat-side-chat.png" width="96%"
+       alt="Claude Console: the plan pinned above an answer with KaTeX math and file links; a formula selected with the Ask in side chat popup over it, and the side chat about it docked on the right">
+</p>
+<p align="center">
+  <sub>Claude Console, which the window shows: the plan pinned above an answer with
+  KaTeX math and file links, and a side chat about the selected formula on the right.
+  In the app, a file path in the chat opens the file in the side pane, next to
+  <b>Files</b>, the file manager. More in
+  <a href="https://github.com/BoZhen/claude-console#readme">Claude Console's README</a>.</sub>
+</p>
 
-## Download
+## Download and install
 
 The [latest release](https://github.com/BoZhen/claude-console-desktop/releases/latest)
-has the packages:
+has a package for macOS, one for Linux, and `SHA256SUMS` with their checksums.
 
-- `Claude-Console-mac-arm64.dmg`, macOS on Apple silicon: open it and drag Claude
-  Console onto Applications. The first start needs one approval, see [macOS](#macos).
-- `Claude-Console-linux-x64.tar.gz`, Linux on x86-64: unpack it and run
-  `claude-console-linux-x64/install.sh`, see [Linux: another computer](#linux-another-computer).
-- `SHA256SUMS`, their checksums (`shasum -a 256 -c SHA256SUMS` on macOS,
-  `sha256sum -c SHA256SUMS` on Linux).
+**macOS** (Apple silicon): download `Claude-Console-mac-arm64.dmg` and open it. In
+the window that opens, drag Claude Console onto Applications, then eject the disk and
+start Claude Console from Applications. The first start needs one approval, because
+the app is not notarized by Apple; see [macOS](#macos).
+
+**Linux** (x86-64): download `Claude-Console-linux-x64.tar.gz`, then in a terminal,
+in the folder it was saved to:
+
+```bash
+tar xzf Claude-Console-linux-x64.tar.gz
+claude-console-linux-x64/install.sh
+```
+
+`install.sh` copies the app to `~/.local/opt/claude-console` and adds Claude Console
+to the applications menu, with its icons. On Ubuntu 23.10 and later it also installs
+an AppArmor profile, so sudo asks for your password once (see
+[Linux: this computer](#linux-this-computer-from-the-checkout) for why). Then start
+Claude Console from the menu. The unpacked folder is no longer needed. A newer package
+installs the same way and keeps the settings; `claude-console-linux-x64/install.sh --remove`
+takes the app away again, and the settings in `~/.config/Claude Console` stay.
+
+To check a download: `shasum -a 256 -c SHA256SUMS` on macOS, `sha256sum -c SHA256SUMS`
+on Linux, in the folder with the files (a file not downloaded is reported missing).
 
 On first start the app asks [where the console runs](#where-the-console-runs). These
 packages carry no update key, so they do not update themselves: a newer version comes
@@ -92,6 +110,12 @@ the browser, copy, paste, save an image, inspect.
 ## Where the console runs
 
 On first start the app asks: **This computer** or **Another computer** (an address).
+
+<p align="center">
+  <img src="figs/first-start.png" width="60%"
+       alt="The first start asks where Claude Console runs: this computer or another computer">
+</p>
+
 The choice can be changed in the console's **Settings → About → Server → Change…**,
 from the menu **File → Server…** (Alt shows the menu bar on Linux), or with the
 button on the "cannot reach" and "did not start" screens.
@@ -206,8 +230,9 @@ claude-console-linux-x64/install.sh      # ./install.sh --remove takes it away a
 It installs the app in `~/.local/opt/claude-console`, a menu entry and icons, and on
 Ubuntu 23.10 and later an AppArmor profile for `~/.local/opt/claude-console/claude-console`
 (sudo asks for the password; see below for why). Installing a newer package replaces
-the app and keeps the settings. The computer must reach the console (the same
-network, or a VPN); from then on it updates itself.
+the app and keeps the settings. With **Another computer** this computer must reach
+that console (the same network, or a VPN). A package built with an update key (see
+[Updates](#updates)) then updates itself from the console.
 
 ## Linux: this computer (from the checkout)
 
@@ -362,7 +387,7 @@ To hand a package to someone else, build it with `--public`:
 | `scripts/mac-dmg-background.html`, `make-mac-background.sh`; `assets/mac-dmg-*` | the disk image window: background page and image, layout template |
 | `scripts/build-linux.sh`, `linux-install.sh` | the Linux package and its `install.sh` |
 | `scripts/stage.sh`, `publish.sh`, `make-update-key.sh` | the app's code as an update, signed, on the console |
-| `test/` | `npm test`; `e2e_update.py`, `e2e_config.py`, `e2e_local.py` (this computer, with the real servers); `mac-dmg-roundtrip.js` (with `mac-layout-check.py`, `mac-signatures.py`) |
+| `test/` | `npm test`; `e2e_update.py`, `e2e_config.py`, `e2e_local.py` (this computer, with the real servers); `mac-dmg-roundtrip.js` (with `mac-layout-check.py`, `mac-signatures.py`); `readme_shots.py` (`figs/first-start.png`) |
 
 `CCD_DEBUG=1` prints the keys `main.js` handles and the context menus it opens.
 

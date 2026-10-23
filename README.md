@@ -24,15 +24,28 @@ computer's `claude` CLI, and stops them when it quits (see [This computer](#this
 ## Download and install
 
 The [latest release](https://github.com/BoZhen/claude-console-desktop/releases/latest)
-has a package for macOS, one for Linux, and `SHA256SUMS` with their checksums.
+has the packages for macOS and Linux, and `SHA256SUMS` with their checksums.
 
 **macOS** (Apple silicon): download `Claude-Console-mac-arm64.dmg` and open it. In
 the window that opens, drag Claude Console onto Applications, then eject the disk and
 start Claude Console from Applications. The first start needs one approval, because
 the app is not notarized by Apple; see [macOS](#macos).
 
-**Linux** (x86-64): download `Claude-Console-linux-x64.tar.gz`, then in a terminal,
-in the folder it was saved to:
+**Linux: Ubuntu, Debian, KDE neon, Linux Mint and the like** (x86-64): download
+`claude-console_<version>_amd64.deb`, then in a terminal, in the folder it was saved to:
+
+```bash
+sudo apt install ./claude-console_1.0.0_amd64.deb
+```
+
+It puts the app in `/opt/claude-console`, with a menu entry and icons; start Claude
+Console from the menu. A newer `.deb` installs over it the same way. `sudo apt remove
+claude-console` uninstalls it, and the settings in `~/.config/Claude Console` stay.
+apt also installs `python3-venv`, which [This computer](#this-computer) needs where
+uv is not installed.
+
+**Linux: other distributions** (x86-64): download `Claude-Console-linux-x64.tar.gz`,
+then in a terminal, in the folder it was saved to:
 
 ```bash
 tar xzf Claude-Console-linux-x64.tar.gz
@@ -40,12 +53,13 @@ claude-console-linux-x64/install.sh
 ```
 
 `install.sh` copies the app to `~/.local/opt/claude-console` and adds Claude Console
-to the applications menu, with its icons. On Ubuntu 23.10 and later it also installs
-an AppArmor profile, so sudo asks for your password once (see
-[Linux: this computer](#linux-this-computer-from-the-checkout) for why). Then start
-Claude Console from the menu. The unpacked folder is no longer needed. A newer package
-installs the same way and keeps the settings; `claude-console-linux-x64/install.sh --remove`
-takes the app away again, and the settings in `~/.config/Claude Console` stay.
+to the applications menu, with its icons. Where the system restricts user namespaces
+(Ubuntu 23.10 and later) it also installs an AppArmor profile, so sudo asks for your
+password once (see [Linux: this computer](#linux-this-computer-from-the-checkout) for
+why). Then start Claude Console from the menu. The unpacked folder is no longer
+needed. A newer package installs the same way and keeps the settings;
+`claude-console-linux-x64/install.sh --remove` takes the app away again, and the
+settings in `~/.config/Claude Console` stay.
 
 To check a download: `shasum -a 256 -c SHA256SUMS` on macOS, `sha256sum -c SHA256SUMS`
 on Linux, in the folder with the files (a file not downloaded is reported missing).
@@ -217,20 +231,32 @@ once, with a forged and a broken bundle (Python with tornado, the console's test
 ## Linux: another computer
 
 ```bash
-scripts/build-linux.sh            # dist/Claude-Console-linux-x64.tar.gz (x86-64)
+scripts/build-linux.sh            # two packages of the same app, for x86-64:
+                                  #   dist/claude-console_<version>_amd64.deb
+                                  #   dist/Claude-Console-linux-x64.tar.gz
 ```
 
-On the other computer, in a terminal:
+On the other computer, in a terminal, one of:
 
 ```bash
-tar xzf Claude-Console-linux-x64.tar.gz
-claude-console-linux-x64/install.sh      # ./install.sh --remove takes it away again
+sudo apt install ./claude-console_1.0.0_amd64.deb   # Ubuntu, Debian and the like
+                                                    # (sudo apt remove claude-console)
+tar xzf Claude-Console-linux-x64.tar.gz             # any distribution
+claude-console-linux-x64/install.sh                 # (./install.sh --remove)
 ```
 
-It installs the app in `~/.local/opt/claude-console`, a menu entry and icons, and on
-Ubuntu 23.10 and later an AppArmor profile for `~/.local/opt/claude-console/claude-console`
-(sudo asks for the password; see below for why). Installing a newer package replaces
-the app and keeps the settings. With **Another computer** this computer must reach
+The `.deb` (`scripts/linux-deb.sh`) puts the app in `/opt/claude-console`, a link in
+`/usr/bin`, a menu entry and icons. Its `chrome-sandbox` is setuid root, as in
+Chrome's and VS Code's packages: where the system restricts user namespaces, Chromium's
+sandbox runs through it. It depends on the libraries the app links against, by the
+names Debian 12 and Ubuntu 22.04 use (Ubuntu 24.04's renamed `t64` packages provide
+them), and recommends `python3-venv`, `libsecret-1-0` and `libnotify4`.
+
+The tar.gz installs the app in `~/.local/opt/claude-console`, a menu entry and icons,
+and on Ubuntu 23.10 and later an AppArmor profile for
+`~/.local/opt/claude-console/claude-console` (sudo asks for the password; see below
+for why). Either package, installed again in a newer version, replaces the app and
+keeps the settings. With **Another computer** this computer must reach
 that console (the same network, or a VPN). A package built with an update key (see
 [Updates](#updates)) then updates itself from the console.
 
@@ -385,7 +411,7 @@ To hand a package to someone else, build it with `--public`:
 | `scripts/install-linux.sh`, `build-mac.sh`, `mac-Info.plist` | install and packaging |
 | `scripts/mac-dmg.js`, `hfs-layout-meta.c`, `make-mac-layout.py`, `mac-tools.sh` | the macOS disk image |
 | `scripts/mac-dmg-background.html`, `make-mac-background.sh`; `assets/mac-dmg-*` | the disk image window: background page and image, layout template |
-| `scripts/build-linux.sh`, `linux-install.sh` | the Linux package and its `install.sh` |
+| `scripts/build-linux.sh`, `linux-deb.sh`, `linux-install.sh` | the Linux packages: the `.deb`, and the tar.gz with its `install.sh` |
 | `scripts/stage.sh`, `publish.sh`, `make-update-key.sh` | the app's code as an update, signed, on the console |
 | `test/` | `npm test`; `e2e_update.py`, `e2e_config.py`, `e2e_local.py` (this computer, with the real servers); `mac-dmg-roundtrip.js` (with `mac-layout-check.py`, `mac-signatures.py`); `readme_shots.py` (`figs/first-start.png`) |
 

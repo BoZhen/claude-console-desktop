@@ -1,5 +1,7 @@
 # Claude Console desktop
 
+English | [简体中文](README.zh-CN.md)
+
 A desktop window for [Claude Console](https://github.com/BoZhen/claude-console) with the
 [web file manager](https://github.com/BoZhen/web-file-manager) built in, instead of a browser tab for the
 console and one more for every file the chat links to. Electron 44, for Linux
@@ -78,11 +80,12 @@ as a new release. An Intel Mac build is `ARCHS=x64 scripts/build-mac.sh` from a 
   that tab and reloads it, since Claude may have changed the file. Keyboard focus
   stays in the console.
 - The pane's first tab, **Files**, is the file manager itself. It cannot be closed.
-- The **rail** on the right edge, shown while the pane is closed: Files opens the
+- The **rail** on the right edge: Files opens the
   pane; the chat bubble opens the console's **Side chats** in its drawer; the gear
   at the foot opens the console's **Settings** (Appearance, Accounts, About). A
-  second press closes either. While the pane is open the rail is hidden and the
-  pane's tab bar has the same Side chats and Settings buttons, and **Close all**
+  second press closes either. With one computer the rail is hidden while the pane is
+  open, and the pane's tab bar has the same Side chats and Settings buttons; with
+  [several](#several-computers) the rail stays beside it. The tab bar has **Close all**
   while any file tab is open (Files stays).
 - **Links to other sites** open in the system browser.
 - **Downloads** (session export, the file manager's download button) go straight to
@@ -222,7 +225,7 @@ Electron runtime inside it stays. On this computer:
 scripts/publish.sh ["what changed"]   # the code as an update, on the console
 ```
 
-It packs the app's code (`main.js`, `updater.js`, `bundle-pick.js`, `localserver.js`, the preloads,
+It packs the app's code (`main.js`, `computers.js`, `updater.js`, `bundle-pick.js`, `localserver.js`, the preloads,
 `shell/`, the icon; `scripts/stage.sh` lists them) into an asar archive with
 `bundle.json` naming its version, the date and minute (`2026.10.23.0612`), signs it
 with an Ed25519 key and puts it in `~/.local/share/claude-console/desktop`. The

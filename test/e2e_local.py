@@ -89,7 +89,7 @@ async def shell(timeout=40):
             t = next((t for t in targets() if t["type"] == "page" and t["url"].startswith("file:")), None)
             if t:
                 c = CDP(await websocket_connect(t["webSocketDebuggerUrl"]))
-                if await c.js("document.readyState==='complete'&&!!window.app&&state.urls!==undefined"): return c
+                if await c.js("document.readyState==='complete'&&!!window.app&&typeof comps!=='undefined'"): return c
         except Exception:
             pass
         await asyncio.sleep(0.5)
@@ -117,7 +117,7 @@ async def close(p):
     p.wait(timeout=30)
 
 LOCAL = """JSON.stringify({screen:!$('local').hidden, title:$('local-title').textContent, step:$('local-step').textContent,
-  buttons:!$('local-buttons').hidden, detail:$('local-detail').textContent, box:!$('urlbox').hidden, mode:state.mode})"""
+  buttons:!$('local-buttons').hidden, detail:$('local-detail').textContent, box:!$('urlbox').hidden, mode:cur?cur.kind:''})"""
 
 async def wait_local(sh, phase_text, timeout=600):
     """Polls the setup screen; returns the steps seen and the last view."""
@@ -188,11 +188,11 @@ async def main():
         checks.update({"C: the next start comes up on this computer without the dialog": con is not None and not again["box"] and again["mode"] == "local",
                        "C: and fast (the Python environment is kept)": took < 20})
         # D: another computer, then this computer again
-        await sh.js(f"openUrlBox();$('url-input').value='http://127.0.0.1:{SPORT}/';$('url-form').requestSubmit()")
+        await sh.js(f"openBox('edit', cur);$('url-input').value='http://127.0.0.1:{SPORT}/';$('url-form').requestSubmit()")
         await asyncio.sleep(3)
         stand = await webview(f"http://127.0.0.1:{SPORT}/")
         gone = not servers_running()
-        await sh.js("openUrlBox();$('srv-local').checked=true;$('url-input').value='';$('url-form').requestSubmit()")
+        await sh.js("openBox('edit', cur);$('srv-local').checked=true;$('url-input').value='';$('url-form').requestSubmit()")
         back = await webview(f"http://127.0.0.1:{CPORT}/", ready="!!document.getElementById('settings')")
         print("D: stand-in:", stand is not None, "| servers stopped:", gone, "| back here:", back is not None)
         checks.update({"D: another computer loads its address": stand is not None,

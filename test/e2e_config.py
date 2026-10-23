@@ -76,7 +76,7 @@ async def shell(timeout=40):
             t = next((t for t in ts if t["type"] == "page" and t["url"].startswith("file:")), None)
             if t:
                 c = CDP(await websocket_connect(t["webSocketDebuggerUrl"]))
-                if await c.js("document.readyState==='complete'&&!!window.app&&state.urls!==undefined"): return c
+                if await c.js("document.readyState==='complete'&&!!window.app&&typeof comps!=='undefined'"): return c
         except Exception:
             pass
         await asyncio.sleep(0.5)
@@ -101,7 +101,7 @@ async def close():
 BOX = """JSON.stringify({box:!$('urlbox').hidden, cancel:!$('url-cancel').hidden, defaults:!$('url-defaults').hidden,
   local:$('srv-local').checked,
   placeholder:$('url-input').placeholder, error:$('url-error').hidden?'':$('url-error').textContent,
-  src:document.getElementById('console').getAttribute('src')||''})"""
+  src:comps.length?comps[0].view.getAttribute('src')||'':''})"""
 
 async def submit(sh, text):
     """Another computer, at text."""
@@ -154,7 +154,7 @@ async def main():
         sh = await shell()
         url_b = await console_url(30)
         start = json.loads(await sh.js(BOX))
-        await sh.js("openUrlBox()"); await asyncio.sleep(0.3)
+        await sh.js("openBox('edit', cur)"); await asyncio.sleep(0.3)
         box = json.loads(await sh.js(BOX))
         back = await submit(sh, "")
         print("B:", start, "| console:", url_b, "\n  dialog:", box, "\n  empty answer:", back)

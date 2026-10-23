@@ -9,10 +9,10 @@
 <body>
 <div id="main">
   <section id="left" class="area">
-    <webview id="console" allowpopups></webview>
+    <div id="consoles"></div>   <!-- one console webview per computer; the one shown is .active -->
     <div id="offline" class="cover" hidden>
       <div class="card">
-        <h1>Cannot reach Claude Console</h1>
+        <h1 id="offline-title">Cannot reach Claude Console</h1>
         <p class="muted">Tried</p>
         <p id="offline-url" class="mono addresses"></p>
         <p id="offline-error" class="muted"></p>
@@ -20,7 +20,7 @@
           is connected). Trying again in <span id="offline-count">5</span> s.</p>
         <div class="row">
           <button id="offline-retry" class="primary">Try now</button>
-          <button id="offline-edit">Server…</button>
+          <button id="offline-edit">Edit computer…</button>
         </div>
       </div>
     </div>
@@ -32,7 +32,7 @@
         <pre id="local-detail" class="mono log" hidden></pre>
         <div id="local-buttons" class="row" hidden>
           <button id="local-retry" class="primary">Try again</button>
-          <button id="local-edit">Server…</button>
+          <button id="local-edit">Edit computer…</button>
         </div>
       </div>
     </div>
@@ -71,6 +71,7 @@
   </section>
 
   <nav id="rail">
+    <div id="rail-computers" hidden></div>   <!-- with several computers: one button each, and + -->
     <button id="rail-files" class="icon" title="Files (Ctrl+\)">
       <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
         <path d="M3 6.5A1.5 1.5 0 0 1 4.5 5h4.6l2 2h8.4A1.5 1.5 0 0 1 21 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z"
@@ -126,11 +127,14 @@
 
 <div id="urlbox" class="modal" hidden>
   <form id="url-form" class="card">
-    <h1>Server</h1>
-    <p class="muted">Where Claude Console runs.</p>
+    <h1 id="url-title">Server</h1>
+    <p id="url-intro" class="muted">Where Claude Console runs.</p>
+    <label id="url-name-row" hidden>Name <input id="url-name" spellcheck="false"
+      placeholder="shown on the rail, for example Office"></label>
     <label class="choice"><input type="radio" name="server" id="srv-local" value="local">
       <span><b>This computer</b><span class="muted">The app runs Claude Console here, with this computer's
-        claude CLI and files. It needs uv or Python 3.10 or newer; the first start sets up the rest.</span></span></label>
+        claude CLI and files. It needs uv or Python 3.10 or newer; the first start sets up the rest.</span><span
+        id="srv-local-taken" class="muted" hidden> Already in the list.</span></span></label>
     <label class="choice"><input type="radio" name="server" id="srv-remote" value="remote">
       <span><b>Another computer</b><span class="muted">A Claude Console server you run elsewhere: its address,
         for example http://192.168.1.10:7703/.<span id="url-defaults" hidden> Leave it empty to try the
@@ -138,8 +142,21 @@
     <input id="url-input" class="mono" spellcheck="false" aria-label="Server address">
     <p id="url-error" class="warn" hidden></p>
     <div class="row">
-      <button type="submit" class="primary">Connect</button>
+      <button type="submit" class="primary" id="url-submit">Connect</button>
       <button type="button" id="url-cancel">Cancel</button>
+      <span class="grow"></span>
+      <button type="button" id="url-remove" hidden>Remove…</button>
+    </div>
+  </form>
+</div>
+
+<div id="confirm" class="modal" hidden>
+  <form id="confirm-form" class="card">
+    <h1 id="confirm-title"></h1>
+    <p id="confirm-text" class="muted"></p>
+    <div class="row">
+      <button type="submit" class="primary" id="confirm-ok">Remove</button>
+      <button type="button" id="confirm-cancel">Cancel</button>
     </div>
   </form>
 </div>

@@ -9,7 +9,7 @@ OUT="$1"; VERSION="$2"; WITH_LOADER="${3:-}"
 ELECTRON_MAJOR="$(node -p 'require(process.argv[1]).version.split(".")[0]' "$APP/node_modules/electron/package.json")"
 rm -rf "$OUT"; mkdir -p "$OUT/assets"
 # the app's code: what main.js loads, and the update logic
-cp "$APP"/{main.js,updater.js,bundle-pick.js,localserver.js,preload-guest.js,preload-shell.js} "$OUT/"
+cp "$APP"/{main.js,computers.js,updater.js,bundle-pick.js,localserver.js,preload-guest.js,preload-shell.js} "$OUT/"
 cp -r "$APP/shell" "$OUT/shell"
 # the local server addresses (git-ignored; see config.example.json): a build without
 # the file has none and asks on first start where the console runs. CCD_PUBLIC=1

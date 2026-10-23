@@ -8,6 +8,9 @@ console and one more for every file the chat links to. Electron 44, for Linux
 The console can run on another computer, a server the app connects to, or on this
 computer: then the app starts Claude Console and the file manager itself, with this
 computer's `claude` CLI, and stops them when it quits (see [This computer](#this-computer)).
+The app can hold several computers at once, each with its own console: one is shown,
+the others keep running, and the rail switches between them (see
+[Several computers](#several-computers)).
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/BoZhen/claude-console/main/figs/desktop-chat-side-chat.png" width="96%"
@@ -98,15 +101,16 @@ as a new release. An Intel Mac build is `ARCHS=x64 scripts/build-mac.sh` from a 
 - The pane's tab bar and borders take the colours of the console's header and follow
   its theme setting.
 - If the console cannot be reached, a screen with the error retries every 5 s and has
-  **Server…**.
+  **Edit computer…**.
 
-The window size, the pane width, whether it is open and its tabs are restored at the
+The window size, the pane width, and for each computer whether its pane is open and its tabs are restored at the
 next start; restored tabs load when first shown.
 
 ## Keys
 
 | Key | Does |
 |---|---|
+| Ctrl+1 … Ctrl+9 (⌘1 … ⌘9) | show computer 1 … 9 of the rail (only with several computers) |
 | Ctrl+\\ (⌘\\) | show / hide the side pane |
 | Ctrl+F (⌘F) | find in the console or in the pane tab, whichever was clicked last; Enter / Shift+Enter: next / previous; Esc closes |
 | Ctrl+W (⌘W) | close the pane tab (never the window) |
@@ -131,21 +135,51 @@ On first start the app asks: **This computer** or **Another computer** (an addre
 </p>
 
 The choice can be changed in the console's **Settings → About → Server → Change…**,
-from the menu **File → Server…** (Alt shows the menu bar on Linux), or with the
-button on the "cannot reach" and "did not start" screens.
+from the menu **File → Edit computer…** (Alt shows the menu bar on Linux), or with
+the button on the "cannot reach" and "did not start" screens.
 
 Another computer: a build can carry addresses in `config.json` (see below), tried in
 order until one answers: for example the console over a VPN first, then the same
 console over another network, so a laptop on either network connects without setup.
-Such a build starts on them without asking. Tabs restored from the other address
-move to the one in use. An empty address in the dialog goes back to trying the ones
-in `config.json`. `--url=http://host:port/` (also `CLAUDE_CONSOLE_URL`) fixes one
-for a single run, `CLAUDE_CONSOLE_URLS` (comma-separated) replaces the list. The file
-manager address is the console's own (`CLAUDE_CONSOLE_WEBFM_URL`, else the console
-host on port 7701).
+Such a build starts on them without asking; `config.json` can also name several
+computers. Tabs restored from the other address move to the one in use. An empty
+address in the dialog goes back to trying the ones in `config.json`.
+`--url=http://host:port/` (also `CLAUDE_CONSOLE_URL`) shows only that address for a
+single run and leaves the saved computers alone, `--local` (also
+`CLAUDE_CONSOLE_LOCAL=1`) only this computer; `CLAUDE_CONSOLE_URLS` (comma-separated)
+replaces the addresses in `config.json`. The file manager address is the console's
+own (`CLAUDE_CONSOLE_WEBFM_URL`, else the console host on port 7701).
 
 Settings and stored logins: `~/.config/Claude Console/` (`settings.json`,
 `logins.json`); on macOS `~/Library/Application Support/Claude Console/`.
+
+## Several computers
+
+The computer icon with a plus at the top of the rail (with one computer the rail
+shows while the side pane is closed), or **File → Add computer…**, adds another
+computer: a name for its button, and this computer or an address. Each computer has its own Claude Console page
+and its own side-pane tabs. The one shown fills the window; the others keep running
+behind it, so their sessions go on and stay connected.
+
+- **The rail** on the right shows a button per computer, with its initials, while there
+  are two or more, and then stays beside the open pane. Click a button or press
+  Ctrl+1 … Ctrl+9 (⌘1 … ⌘9) to switch; the window title names the computer shown.
+- **A red dot with a number** on a button: approvals or questions waiting on that
+  computer. **A grey dot**: a turn finished there while it was not shown. They come
+  from the console's `api/notify/stream`, the feed the phone app's notifications use;
+  a console without it shows no dots.
+- **Right-click a button** to edit the computer (its name, where it runs), reload its
+  console, or remove it. Removing asks first, and only takes the computer out of the
+  app: its console keeps running there. The last computer stays.
+- **This computer** can be one of them, once. Its console and file manager run while
+  the app runs, shown or not.
+- A file path in a console opens in that computer's pane, from that computer's file
+  manager.
+- The list, the computer shown and each one's pane tabs are kept in `settings.json`.
+  The settings of a version with one server become a list with that one computer.
+- A computer added at a plain-http address gets the microphone and the clipboard
+  buttons after the app restarts: Chromium treats such an address as secure only when
+  the app starts with it.
 
 ## This computer
 
@@ -196,7 +230,7 @@ console serves it at `api/desktop/latest` (version, size, SHA-256, signature, th
 Electron it needs) and `api/desktop/bundle/<version>`. An app that runs the console
 on [this computer](#this-computer) asks that console, which offers what was published
 on this same computer, usually nothing: such an install updates by installing a newer
-package.
+package. With [several computers](#several-computers) the app asks the one shown.
 
 The app asks 15 s after it starts and every 6 hours, or from the console's
 **Settings → About → Check for updates**. A newer version is downloaded into
@@ -370,8 +404,18 @@ top of the checkout, which git ignores (`config.example.json` is the template):
 }
 ```
 
-- `urls`: the console addresses the app tries in order when none was chosen in
-  **Server…**.
+- `urls`: one computer's console addresses, tried in order until one answers, when
+  none was chosen in the dialog. Or `computers`, for several:
+
+  ```json
+  "computers": [
+    { "name": "Office", "urls": ["http://192.168.1.10:7703/", "https://office.example.ts.net:7703/"] },
+    { "name": "Lab", "urls": ["http://192.168.1.20:7703/"] }
+  ]
+  ```
+
+  They join the app's list on its first start; one added to `config.json` later joins
+  at the next start, and one you remove in the app stays removed.
 - `updateKey`: the public key updates must be signed with; `scripts/make-update-key.sh`
   writes it (see Updates).
 - `electronMirror`: where the build scripts download Electron from, when
@@ -396,14 +440,15 @@ To hand a package to someone else, build it with `--public`:
 
 | File | Holds |
 |---|---|
-| `config.json` | your server addresses; local, ignored by git (template: `config.example.json`) |
+| `config.json` | your computers' addresses; local, ignored by git (template: `config.example.json`) |
 | `loader.js` | the entry point: starts the newest trusted update, else the built-in code |
 | `bundle-pick.js` | which update to run, and whether it may be trusted (the public key) |
 | `updater.js` | checks the console, downloads and checks an update, restarts into it |
 | `localserver.js` | "This computer": the Python environment, starting and stopping the console and file manager |
 | `server-requirements.txt` | the Python packages for them; `scripts/stage-server.sh` copies their code into a package |
-| `main.js` | window, link routing, logins, downloads, permissions, context menu, keys, menu |
-| `shell/index.html`, `shell.css`, `shell.js` | the window's own page: console `<webview>`, side pane with tabs, splitter, find bar, dialogs |
+| `computers.js` | the list of computers: from `settings.json`, `config.json` and the command line, the single-server settings moved over, names and initials |
+| `main.js` | window, link routing, logins, downloads, permissions, context menu, keys, menu, the streams of the computers not shown |
+| `shell/index.html`, `shell.css`, `shell.js` | the window's own page: a console `<webview>` per computer, the rail and its computers, side pane with tabs, splitter, find bar, dialogs |
 | `preload-shell.js` | the calls the window's page may make to `main.js` |
 | `preload-guest.js` | runs in the console and file manager pages: reports the header colours, mouse back / forward; `window.ClaudeConsoleDesktop` for Settings → About |
 | `assets/icon.png`, `icon.icns` | the app icon, a pixel C and a cursor as clay blocks, rendered in 3D by `scripts/make-icons.py` (numpy, Pillow) |
@@ -413,7 +458,7 @@ To hand a package to someone else, build it with `--public`:
 | `scripts/mac-dmg-background.html`, `make-mac-background.sh`; `assets/mac-dmg-*` | the disk image window: background page and image, layout template |
 | `scripts/build-linux.sh`, `linux-deb.sh`, `linux-install.sh` | the Linux packages: the `.deb`, and the tar.gz with its `install.sh` |
 | `scripts/stage.sh`, `publish.sh`, `make-update-key.sh` | the app's code as an update, signed, on the console |
-| `test/` | `npm test`; `e2e_update.py`, `e2e_config.py`, `e2e_local.py` (this computer, with the real servers); `mac-dmg-roundtrip.js` (with `mac-layout-check.py`, `mac-signatures.py`); `readme_shots.py` (`figs/first-start.png`) |
+| `test/` | `npm test` (with `computers.test.js`); `e2e_update.py`, `e2e_config.py`, `e2e_computers.py` (several computers, against stand-in consoles), `e2e_local.py` (this computer, with the real servers); `mac-dmg-roundtrip.js` (with `mac-layout-check.py`, `mac-signatures.py`); `readme_shots.py` (`figs/first-start.png`) |
 
 `CCD_DEBUG=1` prints the keys `main.js` handles and the context menus it opens.
 

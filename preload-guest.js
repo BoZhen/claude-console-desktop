@@ -30,7 +30,7 @@ window.addEventListener('DOMContentLoaded', () => {
 // The console page's Settings > About: the desktop app's version and its updates.
 // info() / check() / update() answer with the updater's state (see updater.js);
 // "ccd-update-changed" on document says it changed. serverInfo() says where the
-// console runs ({ mode: 'local' | 'remote', url, claude }), serverDialog() opens the
+// console runs ({ mode: 'local' | 'remote', url, name, computers, claude }), serverDialog() opens the
 // app's Server dialog; "ccd-server-changed" says the server changed.
 contextBridge.exposeInMainWorld('ClaudeConsoleDesktop', {
   info: () => ipcRenderer.invoke('desktop-update-info'),

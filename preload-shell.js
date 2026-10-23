@@ -4,15 +4,20 @@ const { contextBridge, ipcRenderer } = require('electron');
 
 const EVENTS = new Set([
   'open-in-pane', 'find', 'close-tab', 'cycle-tab', 'toggle-pane', 'reload', 'open-fm',
-  'edit-url', 'auth-request', 'toast', 'tab-action', 'update-state', 'local-state', 'local-line',
+  'auth-request', 'toast', 'tab-action', 'update-state', 'local-state', 'local-line',
+  'switch-computer', 'add-computer', 'edit-computer', 'computer-action', 'attention',
 ]);
 
 contextBridge.exposeInMainWorld('app', {
   config: () => ipcRenderer.invoke('get-config'),
-  setServer: (choice) => ipcRenderer.invoke('set-server', choice),   // { mode: 'local' | 'remote', url }
+  // { id?, name, kind: 'local' | 'remote', url } → { config, id, restartForMic }
+  saveComputer: (c) => ipcRenderer.invoke('save-computer', c),
+  removeComputer: (id) => ipcRenderer.invoke('remove-computer', id),   // asks first; → { removed, config }
+  setCurrent: (id) => ipcRenderer.send('set-current', id),
+  computerMenu: (id) => ipcRenderer.send('computer-menu', id),
   localRetry: () => ipcRenderer.invoke('local-retry'),
-  setOrigins: (o) => ipcRenderer.send('origins', o),
-  savePane: (pane) => ipcRenderer.send('save-pane', pane),
+  setOrigins: (o) => ipcRenderer.send('origins', o),   // { id, console, fm, guest }
+  savePane: (pane) => ipcRenderer.send('save-pane', pane),   // { id, open, frac, tabs, active }
   openExternal: (url) => ipcRenderer.send('open-external', url),
   authReply: (reply) => ipcRenderer.send('auth-reply', reply),
   showItem: (file) => ipcRenderer.send('show-item', file),

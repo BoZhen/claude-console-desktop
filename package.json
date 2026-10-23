@@ -1,7 +1,7 @@
 {
   "name": "claude-console-desktop",
   "productName": "Claude Console",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Claude Console and the web file manager in one desktop window",
   "main": "loader.js",
   "desktopName": "claude-console.desktop",

@@ -20,6 +20,22 @@ computer's `claude` CLI, and stops them when it quits (see [This computer](#this
 └──────────────────────────────┴─┴────────────────────────────────┘
 ```
 
+## Download
+
+The [latest release](https://github.com/BoZhen/claude-console-desktop/releases/latest)
+has the packages:
+
+- `Claude-Console-mac-arm64.dmg`, macOS on Apple silicon: open it and drag Claude
+  Console onto Applications. The first start needs one approval, see [macOS](#macos).
+- `Claude-Console-linux-x64.tar.gz`, Linux on x86-64: unpack it and run
+  `claude-console-linux-x64/install.sh`, see [Linux: another computer](#linux-another-computer).
+- `SHA256SUMS`, their checksums (`shasum -a 256 -c SHA256SUMS` on macOS,
+  `sha256sum -c SHA256SUMS` on Linux).
+
+On first start the app asks [where the console runs](#where-the-console-runs). These
+packages carry no update key, so they do not update themselves: a newer version comes
+as a new release. An Intel Mac build is `ARCHS=x64 scripts/build-mac.sh` from a checkout.
+
 ## What goes where
 
 - **File paths in the chat** (and 📂 Open folder, and image thumbnails) open in the

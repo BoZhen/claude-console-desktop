@@ -40,7 +40,7 @@ the app is not notarized by Apple; see [macOS](#macos).
 `claude-console_<version>_amd64.deb`, then in a terminal, in the folder it was saved to:
 
 ```bash
-sudo apt install ./claude-console_1.0.0_amd64.deb
+sudo apt install ./claude-console_1.1.0_amd64.deb
 ```
 
 It puts the app in `/opt/claude-console`, with a menu entry and icons; start Claude
@@ -276,7 +276,7 @@ scripts/build-linux.sh            # two packages of the same app, for x86-64:
 On the other computer, in a terminal, one of:
 
 ```bash
-sudo apt install ./claude-console_1.0.0_amd64.deb   # Ubuntu, Debian and the like
+sudo apt install ./claude-console_1.1.0_amd64.deb   # Ubuntu, Debian and the like
                                                     # (sudo apt remove claude-console)
 tar xzf Claude-Console-linux-x64.tar.gz             # any distribution
 claude-console-linux-x64/install.sh                 # (./install.sh --remove)

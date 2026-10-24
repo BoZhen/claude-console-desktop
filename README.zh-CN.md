@@ -35,7 +35,7 @@ app 没有经过 Apple 公证，所以第一次启动需要确认一次，见 [m
 `claude-console_<版本>_amd64.deb`，然后在终端里、在它所在的文件夹中运行：
 
 ```bash
-sudo apt install ./claude-console_1.0.0_amd64.deb
+sudo apt install ./claude-console_1.1.0_amd64.deb
 ```
 
 app 装在 `/opt/claude-console`，并带有菜单项和图标；从菜单启动 Claude Console。新版本的
@@ -235,7 +235,7 @@ scripts/build-linux.sh            # 同一个 app 的两种安装包，x86-64：
 在另一台电脑的终端里，二选一：
 
 ```bash
-sudo apt install ./claude-console_1.0.0_amd64.deb   # Ubuntu、Debian 等
+sudo apt install ./claude-console_1.1.0_amd64.deb   # Ubuntu、Debian 等
                                                     # （sudo apt remove claude-console 卸载）
 tar xzf Claude-Console-linux-x64.tar.gz             # 任何发行版
 claude-console-linux-x64/install.sh                 # （./install.sh --remove 卸载）

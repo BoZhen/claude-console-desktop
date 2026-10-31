@@ -50,6 +50,16 @@
                 fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
         </svg>
       </button>
+      <!-- the console's Agents tab; only when that console has one (see showDrawer) -->
+      <button id="pane-agents" class="icon" title="Agents" hidden>
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+          <rect x="5" y="8" width="14" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"/>
+          <path d="M12 8V5 M9 13h.01 M15 13h.01 M9.5 16.2h5 M3 12.5v3 M21 12.5v3" fill="none" stroke="currentColor"
+                stroke-width="1.7" stroke-linecap="round"/>
+          <circle cx="12" cy="4.2" r="1.2" fill="currentColor"/>
+        </svg>
+        <span class="badge" hidden></span>
+      </button>
       <button id="pane-update" class="icon update" title="Restart to update" hidden>
         <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" class="upicon">
         <circle cx="12" cy="12" r="8.6" fill="none" stroke="currentColor" stroke-width="1.6"/>
@@ -83,6 +93,16 @@
         <path d="M4 6.5A1.5 1.5 0 0 1 5.5 5h13A1.5 1.5 0 0 1 20 6.5v8a1.5 1.5 0 0 1-1.5 1.5H11l-4 3.5V16H5.5A1.5 1.5 0 0 1 4 14.5z"
               fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
       </svg>
+    </button>
+    <!-- the subagents of the session shown, with how many still run -->
+    <button id="rail-agents" class="icon" title="Agents" hidden>
+      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+        <rect x="5" y="8" width="14" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"/>
+        <path d="M12 8V5 M9 13h.01 M15 13h.01 M9.5 16.2h5 M3 12.5v3 M21 12.5v3" fill="none" stroke="currentColor"
+              stroke-width="1.7" stroke-linecap="round"/>
+        <circle cx="12" cy="4.2" r="1.2" fill="currentColor"/>
+      </svg>
+      <span class="badge" hidden></span>
     </button>
     <span class="rail-gap"></span>
     <button id="rail-update" class="icon update" title="Restart to update" hidden>

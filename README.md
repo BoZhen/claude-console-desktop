@@ -81,10 +81,13 @@ as a new release. An Intel Mac build is `ARCHS=x64 scripts/build-mac.sh` from a 
   stays in the console.
 - The pane's first tab, **Files**, is the file manager itself. It cannot be closed.
 - The **rail** on the right edge: Files opens the
-  pane; the chat bubble opens the console's **Side chats** in its drawer; the gear
-  at the foot opens the console's **Settings** (Appearance, Accounts, About). A
-  second press closes either. With one computer the rail is hidden while the pane is
-  open, and the pane's tab bar has the same Side chats and Settings buttons; with
+  pane; the chat bubble opens the console's **Side chats** in its drawer; the robot
+  below it opens the drawer's **Agents** tab, the subagents of the session shown, and
+  its badge counts those still running (consoles without an Agents tab show no robot);
+  the gear at the foot opens the console's **Settings** (Appearance, Accounts, About).
+  A second press closes any of them, and the button of the drawer tab on screen is
+  lit. With one computer the rail is hidden while the pane is open, and the pane's
+  tab bar has the same Side chats, Agents and Settings buttons; with
   [several](#several-computers) the rail stays beside it. The tab bar has **Close all**
   while any file tab is open (Files stays).
 - **Links to other sites** open in the system browser.
@@ -461,7 +464,7 @@ To hand a package to someone else, build it with `--public`:
 | `scripts/mac-dmg-background.html`, `make-mac-background.sh`; `assets/mac-dmg-*` | the disk image window: background page and image, layout template |
 | `scripts/build-linux.sh`, `linux-deb.sh`, `linux-install.sh` | the Linux packages: the `.deb`, and the tar.gz with its `install.sh` |
 | `scripts/stage.sh`, `publish.sh`, `make-update-key.sh` | the app's code as an update, signed, on the console |
-| `test/` | `npm test` (with `computers.test.js`); `e2e_update.py`, `e2e_config.py`, `e2e_computers.py` (several computers, against stand-in consoles), `e2e_local.py` (this computer, with the real servers); `mac-dmg-roundtrip.js` (with `mac-layout-check.py`, `mac-signatures.py`); `readme_shots.py` (`figs/first-start.png`) |
+| `test/` | `npm test` (with `computers.test.js`); `e2e_update.py`, `e2e_config.py`, `e2e_computers.py` (several computers, against stand-in consoles), `e2e_agents.py` (the Agents button, the real console page from the checkout beside this one), `e2e_local.py` (this computer, with the real servers); `mac-dmg-roundtrip.js` (with `mac-layout-check.py`, `mac-signatures.py`); `readme_shots.py` (`figs/first-start.png`) |
 
 `CCD_DEBUG=1` prints the keys `main.js` handles and the context menus it opens.
 

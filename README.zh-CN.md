@@ -71,9 +71,11 @@ profile，所以 sudo 会问一次密码（原因见 [Linux 在这台电脑上�
   这个文件。键盘焦点留在控制台里。
 - 侧边面板的第一个标签页 **Files** 就是文件管理器本身，不能关闭。
 - **右侧按钮列**（窗口右边缘的一列按钮）：文件夹按钮打开侧边面板；对话气泡按钮在控制台的
-  抽屉里打开 **Side chats**；底部的齿轮打开控制台的 **Settings**（Appearance、Accounts、About）。
-  再按一次就关闭。只有一台电脑时，侧边面板打开后按钮列隐藏，面板的标签栏里有同样的 Side chats
-  和 Settings 按钮；有[多台电脑](#多台电脑)时，按钮列留在面板旁边。有文件标签页打开时，标签栏里
+  抽屉里打开 **Side chats**；它下面的机器人按钮打开抽屉的 **Agents** 标签页，即当前显示的
+  session 的子代理，按钮上的数字是其中仍在运行的个数（没有 Agents 标签页的旧版控制台不显示这个
+  按钮）；底部的齿轮打开控制台的 **Settings**（Appearance、Accounts、About）。再按一次就关闭，
+  抽屉当前显示的标签页对应的按钮会高亮。只有一台电脑时，侧边面板打开后按钮列隐藏，面板的标签栏里
+  有同样的 Side chats、Agents 和 Settings 按钮；有[多台电脑](#多台电脑)时，按钮列留在面板旁边。有文件标签页打开时，标签栏里
   还有 **Close all**（Files 保留）。
 - **指向其他网站的链接**在系统浏览器中打开。
 - **下载**（导出 session、文件管理器的下载按钮）直接存到“下载”文件夹，不会覆盖已有文件
@@ -395,7 +397,7 @@ npm 自己的设置（例如镜像源）写在 `.npmrc` 里，git 同样忽略�
 | `scripts/mac-dmg-background.html`、`make-mac-background.sh`；`assets/mac-dmg-*` | 磁盘镜像窗口：背景页面和图片、布局模板 |
 | `scripts/build-linux.sh`、`linux-deb.sh`、`linux-install.sh` | Linux 安装包：`.deb`，以及带 `install.sh` 的 tar.gz |
 | `scripts/stage.sh`、`publish.sh`、`make-update-key.sh` | 把 app 的代码作为签名的更新放到控制台上 |
-| `test/` | `npm test`（含 `computers.test.js`）；`e2e_update.py`、`e2e_config.py`、`e2e_computers.py`（多台电脑，用替身控制台）、`e2e_local.py`（这台电脑，用真实的服务器）；`mac-dmg-roundtrip.js`（配合 `mac-layout-check.py`、`mac-signatures.py`）；`readme_shots.py`（`figs/first-start.png`） |
+| `test/` | `npm test`（含 `computers.test.js`）；`e2e_update.py`、`e2e_config.py`、`e2e_computers.py`（多台电脑，用替身控制台）、`e2e_agents.py`（Agents 按钮，用旁边那份 claude-console 的真实页面）、`e2e_local.py`（这台电脑，用真实的服务器）；`mac-dmg-roundtrip.js`（配合 `mac-layout-check.py`、`mac-signatures.py`）；`readme_shots.py`（`figs/first-start.png`） |
 
 `CCD_DEBUG=1` 打印 `main.js` 处理的按键和它打开的右键菜单。
 

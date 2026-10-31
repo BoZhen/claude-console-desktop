@@ -21,10 +21,43 @@ function reportColors() {
   });
 }
 
+// The console's drawer, for the window's rail. The page's own rail is hidden in this
+// app, but its buttons still say which drawer tab is open (class "on"), and its Agents
+// button's badge how many subagents run in the session shown. Sent when it changes:
+// { agents: the page has an Agents tab, running: the badge's text ('' when none run),
+//   title, open: 'agents' | 'side' | '', badgeBg, badgeFg: the badge's colours }.
+let lastDrawer = '';
+function reportDrawer() {
+  const agents = document.getElementById('prAgents');
+  const side = document.getElementById('prSide');
+  const badge = agents && agents.querySelector('.rbadge');
+  const on = (b) => !!b && b.classList.contains('on');
+  const st = {
+    agents: !!agents,
+    running: badge && !badge.hidden ? badge.textContent : '',
+    title: agents ? agents.title : '',
+    open: on(agents) ? 'agents' : on(side) ? 'side' : '',
+    badgeBg: badge ? getComputedStyle(badge).backgroundColor : '',
+    badgeFg: badge ? getComputedStyle(badge).color : '',
+  };
+  const key = JSON.stringify(st);
+  if (key === lastDrawer) return;
+  lastDrawer = key;
+  ipcRenderer.sendToHost('drawer', st);
+}
+
 window.addEventListener('DOMContentLoaded', () => {
   reportColors();
-  new MutationObserver(() => { setTimeout(reportColors, 60); setTimeout(reportColors, 400); })
-    .observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme', 'class', 'style'] });
+  new MutationObserver(() => {
+    setTimeout(reportColors, 60); setTimeout(reportColors, 400);
+    setTimeout(reportDrawer, 60);   // a theme brings its own badge colours
+  }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme', 'class', 'style'] });
+  const rail = document.getElementById('prail');
+  if (!rail) return;   // the file manager, or a console without the rail
+  reportDrawer();
+  new MutationObserver(reportDrawer).observe(rail, {
+    subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ['class', 'hidden', 'title'],
+  });
 });
 
 // The console page's Settings > About: the desktop app's version and its updates.

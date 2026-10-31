@@ -49,7 +49,7 @@ function makeComp(info) {
   const c = {
     id: info.id, name: '', givenName: '', kind: '', urls: [], url: '', configUrls: [], fmHint: '',
     urlIdx: 0, tried: 0, page: '', answered: false, fmRoot: '', lastFm: '', title: '', colors: null,
-    offline: null, countdown: 0, retryTimer: null, localState: null,
+    offline: null, countdown: 0, retryTimer: null, localState: null, drawer: null,
     tabs: [], active: null, paneOpen: false, saveTimer: null, waiting: 0, unseen: false, btn: null,
   };
   updateComp(c, info);
@@ -61,9 +61,13 @@ function makeComp(info) {
   view.addEventListener('page-title-updated', (e) => { c.title = e.title || ''; if (c === cur) showTitle(); });
   view.addEventListener('focus', () => { state.lastArea = 'console'; });
   view.addEventListener('ipc-message', (e) => {
-    if (e.channel !== 'colors') return;
-    c.colors = e.args[0];
-    if (c === cur) applyColors(c.colors);
+    if (e.channel === 'colors') {
+      c.colors = e.args[0];
+      if (c === cur) applyColors(c.colors);
+    } else if (e.channel === 'drawer') {   // preload-guest.js: reportDrawer
+      c.drawer = e.args[0];
+      if (c === cur) showDrawer();
+    }
   });
   view.addEventListener('found-in-page', onFound);
   view.addEventListener('render-process-gone', () => setTimeout(() => navigate(view, c.page), 500));
@@ -72,6 +76,8 @@ function makeComp(info) {
   view.addEventListener('did-fail-load', (e) => {
     if (!e.isMainFrame || e.errorCode === -3) return;   // -3: replaced by a newer navigation
     c.answered = false;
+    c.drawer = null;
+    if (c === cur) showDrawer();
     c.tried += 1;
     if (c.tried < c.urls.length) {   // the next address (another network to the same console)
       connect(c, c.urlIdx + 1);
@@ -80,6 +86,8 @@ function makeComp(info) {
     showOffline(c, e.errorDescription || `error ${e.errorCode}`);
   });
   view.addEventListener('did-navigate', (e) => {
+    c.drawer = null;   // the new page says again what its drawer has
+    if (c === cur) showDrawer();
     c.answered = e.httpResponseCode > 0;
     if (c.answered) { c.tried = 0; hideOffline(c); }
   });
@@ -157,6 +165,7 @@ function switchTo(c, { focus = true } = {}) {
   showTitle();
   renderPane();
   renderCovers();
+  showDrawer();
   if (changed) window.app.setCurrent(c.id);
   if (focus && $('urlbox').hidden) c.view.focus();
 }
@@ -710,6 +719,43 @@ async function toggleSideChats() {
   else if (r === 'unsupported') toast({ text: 'This console version has no side chats.' });
 }
 $('rail-side').addEventListener('click', toggleSideChats);
+
+// The subagents of the session shown are on the same drawer's Agents tab. The page's
+// own rail (hidden here) opens it with railTap, which closes the drawer when that tab
+// is already showing.
+const AGENTS_TOGGLE_JS = `(() => {
+  if (typeof railTap !== 'function' || !document.getElementById('tabAgents')) return 'unsupported';
+  railTap('agents');
+  return document.getElementById('drawer').classList.contains('open') ? 'open' : 'closed';
+})()`;
+async function toggleAgents() {
+  if (!cur || cur.offline) return;
+  let r = '';
+  try { r = await cur.view.executeJavaScript(AGENTS_TOGGLE_JS); } catch { r = 'error'; }
+  if (r === 'open') cur.view.focus();
+}
+for (const id of ['rail-agents', 'pane-agents']) $(id).addEventListener('click', toggleAgents);
+
+/** The Agents buttons follow the console shown (c.drawer, from preload-guest.js): there
+    only when its console has an Agents tab, a badge with how many subagents still run
+    in its session, the page's tooltip; Agents or Side chats lit while the drawer shows
+    that tab. */
+function showDrawer() {
+  const d = (cur && cur.drawer) || {};
+  for (const id of ['rail-agents', 'pane-agents']) {
+    const b = $(id);
+    b.hidden = !d.agents;
+    b.title = d.title || 'Agents';
+    b.classList.toggle('on', d.open === 'agents');
+    const n = b.querySelector('.badge');
+    n.hidden = !d.running;
+    n.textContent = d.running || '';
+  }
+  for (const id of ['rail-side', 'pane-side']) $(id).classList.toggle('on', d.open === 'side');
+  const root = document.documentElement.style;
+  if (d.badgeBg) root.setProperty('--badge-bg', d.badgeBg); else root.removeProperty('--badge-bg');
+  if (d.badgeFg) root.setProperty('--badge-fg', d.badgeFg); else root.removeProperty('--badge-fg');
+}
 
 // The console's Settings (Appearance, Accounts, About), through the page's own
 // functions; a second press closes it.
